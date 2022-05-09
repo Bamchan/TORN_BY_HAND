@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const PENDING = "pending";
+      const RESOLVED = "resolved";
+      const REJECTED = "reject";
+      class MyPromise {
+        constructor(func) {
+          this.state = PENDING;
+          this.value = null;
+          this.reason = null;
+          this.onResolvedCallback = [];
+          this.onRejectedCallback = [];
+          try {
+            func(this.resolve.bind(this), this.reject.bind(this));
+          } catch (err) {
+            this.reject(err);
+          }
+        }
+        resolve(value) {
+          if (this.state === PENDING) {
+            setTimeout(() => {
+              this.state = RESOLVED;
+              this.value = value;
+              this.onResolvedCallback.forEach((cb) => {
+                cb(value);
+              });
+            }, 0);
+          }
+        }
+        reject(reason) {
+          if (this.state === REJECTED) {
+            setTimeout(() => {
+              this.state = REJECTED;
+              this.reason = reason;
+              this.onRejectedCallback.forEach((cb) => {
+                cb(reason);
+              });
+            }, 0);
+          }
+        }
+        then(onResolve, onReject) {}
+      }
+      new MyPromise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(1);
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>

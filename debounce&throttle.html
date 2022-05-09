@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <button onclick="throttle1()">throttle</button>
+    <button onclick="debounce1()">debounce</button>
+  </body>
+  <script>
+    //节流 在n秒的周期内，只会触发一次，如果多次触发，只会有一次生效
+    function throttle(func, interval) {
+      let isThrottle = false;
+      return function () {
+        const context = this;
+        if (!isThrottle) {
+          func.apply(context, arguments);
+          setTimeout(() => {
+            isThrottle = false;
+          }, interval);
+          isThrottle = true;
+        }
+      };
+    }
+    // //防抖 在事件触发后n秒内执行，如果在这n秒内又被执行，则重新计时
+    // function debounce(func, wait) {
+    //     let timeout;
+    //     return function () {
+    //         const context = this;
+    //         const args = arguments;
+    //         timeout && clearTimeout(timeout);
+    //         timeout = setTimeout(() => {
+    //             func.apply(context, args);
+    //         }, wait);
+    //     };
+    // }
+    const throttle1 = throttle(click1, 3000);
+    const debounce1 = debounce(click1, 3000);
+    function click1() {
+      console.log(123);
+    }
+
+    function debounce(func, wait) {
+      let timer = null;
+      return function () {
+        const context = this;
+        const args = arguments;
+        console.log(context, args);
+        timer && clearTimeout(timer);
+        timer = setTimeout(() => {
+          func.apply(context, args);
+        }, wait);
+      };
+    }
+
+    function throttle(func, interval) {
+      let isThrottle = false;
+      return function () {
+        const context = this;
+        const args = arguments;
+        if (!isThrottle) {
+          func.apply(context, args);
+          setTimeout(() => {
+            isThrottle = false;
+          }, interval);
+          isThrottle = true;
+        }
+      };
+    }
+
+    function debounce(func, wait) {
+      let timer;
+      return function () {
+        let args = arguments;
+        let context = this;
+        if (timer) {
+          clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+          func.apply(context, args);
+        }, wait);
+      };
+    }
+
+    function throttle(fn, interval) {
+      let isThrottle = false;
+      return function () {
+        const context = this;
+        const args = arguments;
+        if (!isThrottle) {
+          fn.apply(context, args);
+          setTimeout(() => {
+            isThrottle = false;
+          }, interval);
+          isThrottle = true;
+        }
+      };
+    }
+
+    function throttle(func, interval) {
+      let curTime = Date.now();
+      return function () {
+        let nowTime = Date.now();
+        let context = this;
+        let args = arguments;
+        if (nowTime - curTime > interval) {
+          setTimeout(() => {
+            curTime = Date.now();
+            func.apply(context, args);
+          }, interval);
+        }
+      };
+    }
+  </script>
+</html>

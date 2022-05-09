@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function bar(name, age) {
+        console.log(name, age);
+        console.log(this.value);
+      }
+
+      Function.prototype.myCall = function (context) {
+        if (typeof this !== "function") {
+          throw new Error("this is not function");
+        }
+        context = context || window;
+        const args = [...arguments].slice(1);
+        const key = Symbol("fn");
+        context[key] = this;
+
+        const result = context[key](...args);
+
+        delete context[key];
+        return result;
+      };
+
+      Function.prototype.myApply = function (context) {
+        if (typeof this !== "function") {
+          throw new Error("this is not function");
+        }
+
+        context = context || window;
+        const key = Symbol("fn");
+        context[key] = this;
+        let result = null;
+        if (arguments[1]) {
+          result = context[key](...arguments[1]);
+        } else {
+          result = context[key]();
+        }
+        delete context[key];
+        return result;
+      };
+
+      Function.prototype.myBind = function (context) {
+        if (typeof this !== "function") {
+          throw new Error("this is not function");
+        }
+        context = context || window;
+        console.log(context);
+        const args = [...arguments].slice(1),
+          fn = this;
+        return function Fn() {
+          console.log(this);
+          console.log(this instanceof Fn, arguments);
+          return fn.apply(
+            this instanceof Fn ? this : context,
+            args.concat(arguments)
+          );
+        };
+      };
+      const foo = {
+        value: 1,
+        fn: function () {
+          bar.myBind(this, 2)();
+        },
+      };
+      foo.fn(22);
+    </script>
+  </body>
+</html>
